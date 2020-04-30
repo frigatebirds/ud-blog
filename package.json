@@ -1,0 +1,21 @@
+{
+  "name": "skgj-docs",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "dev": "vuepress dev docs --debug --temp .temp",
+    "build": "vuepress build docs"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "v-dialogs": "^2.1.4",
+    "vuepress": "^1.4.1",
+    "vuepress-plugin-autobar": "github:boboidream/vuepress-bar"
+  }
+}
