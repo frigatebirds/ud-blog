@@ -22,7 +22,9 @@ module.exports = ctx => ({
             '/vue/': subSidebar('Vue', '说明', 'vue'),
             '/go/': subSidebar('Go', '说明', 'go')
         },
+        displayAllHeaders: true, // 默认值：false
         lastUpdated: 'Last Updated',
+        smoothScroll: true
     },
     plugins: [
         // ['autobar'],
