@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>oauth2 token自定义返回格式 | 技术收藏</title>
+    <meta name="generator" content="VuePress 1.4.1">
+    <link rel="icon" href="/ud-blog/logo.png">
+    <meta name="description" content="厉害">
+    <link rel="preload" href="/ud-blog/assets/css/0.styles.f1971eff.css" as="style"><link rel="preload" href="/ud-blog/assets/js/app.4b8665af.js" as="script"><link rel="preload" href="/ud-blog/assets/js/2.ac2a2294.js" as="script"><link rel="preload" href="/ud-blog/assets/js/9.0466326c.js" as="script"><link rel="prefetch" href="/ud-blog/assets/js/10.bbabf623.js"><link rel="prefetch" href="/ud-blog/assets/js/11.d9c70593.js"><link rel="prefetch" href="/ud-blog/assets/js/12.5f298e2b.js"><link rel="prefetch" href="/ud-blog/assets/js/13.de7c851a.js"><link rel="prefetch" href="/ud-blog/assets/js/14.8db0a7d2.js"><link rel="prefetch" href="/ud-blog/assets/js/15.223228e9.js"><link rel="prefetch" href="/ud-blog/assets/js/3.5add2f55.js"><link rel="prefetch" href="/ud-blog/assets/js/4.705532e2.js"><link rel="prefetch" href="/ud-blog/assets/js/5.a3ed831f.js"><link rel="prefetch" href="/ud-blog/assets/js/6.02cc7ddc.js"><link rel="prefetch" href="/ud-blog/assets/js/7.f3707278.js"><link rel="prefetch" href="/ud-blog/assets/js/8.5874e7e0.js">
+    <link rel="stylesheet" href="/ud-blog/assets/css/0.styles.f1971eff.css">
+  </head>
+  <body>
+    <div id="app" data-server-rendered="true"><div class="theme-container"><header class="navbar"><div class="sidebar-button"><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="img" viewBox="0 0 448 512" class="icon"><path fill="currentColor" d="M436 124H12c-6.627 0-12-5.373-12-12V80c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12zm0 160H12c-6.627 0-12-5.373-12-12v-32c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12zm0 160H12c-6.627 0-12-5.373-12-12v-32c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12z"></path></svg></div> <a href="/ud-blog/" class="home-link router-link-active"><img src="/ud-blog/logo.png" alt="技术收藏" class="logo"> <span class="site-name can-hide">技术收藏</span></a> <div class="links"><div class="search-box"><input aria-label="Search" autocomplete="off" spellcheck="false" value=""> <!----></div> <nav class="nav-links can-hide"><div class="nav-item"><a href="/ud-blog/java/" class="nav-link router-link-active">
+  Java
+</a></div><div class="nav-item"><a href="/ud-blog/docker/" class="nav-link">
+  Docker
+</a></div><div class="nav-item"><a href="/ud-blog/linux/" class="nav-link">
+  Linux
+</a></div><div class="nav-item"><a href="/ud-blog/vue/" class="nav-link">
+  Vue
+</a></div><div class="nav-item"><a href="/ud-blog/go/" class="nav-link">
+  Go
+</a></div> <!----></nav></div></header> <div class="sidebar-mask"></div> <aside class="sidebar"><nav class="nav-links"><div class="nav-item"><a href="/ud-blog/java/" class="nav-link router-link-active">
+  Java
+</a></div><div class="nav-item"><a href="/ud-blog/docker/" class="nav-link">
+  Docker
+</a></div><div class="nav-item"><a href="/ud-blog/linux/" class="nav-link">
+  Linux
+</a></div><div class="nav-item"><a href="/ud-blog/vue/" class="nav-link">
+  Vue
+</a></div><div class="nav-item"><a href="/ud-blog/go/" class="nav-link">
+  Go
+</a></div> <!----></nav>  <ul class="sidebar-links"><li><section class="sidebar-group depth-0"><p class="sidebar-heading open"><span>Java</span> <!----></p> <ul class="sidebar-links sidebar-group-items"><li><a href="/ud-blog/java/" class="sidebar-link">说明</a></li><li><a href="/ud-blog/java/spring/OAuth2.html" class="sidebar-link">OAuth2</a><ul class="sidebar-sub-headers"></ul></li><li><a href="/ud-blog/java/spring/OAuth2-token自定义返回格式.html" class="active sidebar-link">oauth2 token自定义返回格式</a></li><li><a href="/ud-blog/java/spring/spring-boot-mongodb.html" class="sidebar-link">spring-boot mongodb</a></li></ul></section></li></ul> </aside> <main class="page"> <div class="theme-default-content content__default"><p>利用aspect实现</p> <div class="language- extra-class"><pre class="language-text"><code>package com.ud.bms.demo.oauth2;
+
+import lombok.extern.slf4j.Slf4j;
+import org.aspectj.lang.ProceedingJoinPoint;
+import org.aspectj.lang.annotation.Around;
+import org.aspectj.lang.annotation.Aspect;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.oauth2.common.OAuth2AccessToken;
+import org.springframework.stereotype.Component;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
+
+/**
+ * &lt; /auth/token  自定义 返回数据格式&gt;
+ *
+ * @author : wk
+ * @version : 1.0
+ * @since : 2020/2/11 13:44
+ * Company : Beijing Tepia (Wuhan R&amp;D Center)
+ */
+@Component
+@Aspect
+@Slf4j
+public class CustomOAuth2AccessTokenAspect {
+    @Around(&quot;execution(* org.springframework.security.oauth2.provider.endpoint.TokenEndpoint.postAccessToken(..))&quot;)
+    public Object handle(ProceedingJoinPoint pjp) {
+
+        Map&lt;String, Object&gt; response = new HashMap&lt;&gt;();
+        try {
+            Object proceed = pjp.proceed();
+
+            Integer code = 0;
+            String msg = &quot;&quot;;
+
+            ResponseEntity&lt;OAuth2AccessToken&gt; responseEntity;
+            if (Objects.nonNull(proceed) &amp;&amp; (responseEntity = (ResponseEntity&lt;OAuth2AccessToken&gt;) proceed).getStatusCode().is2xxSuccessful()) {
+                response.put(&quot;data&quot;, responseEntity.getBody());
+            } else {
+                code = 1;
+                msg = &quot;授权失败&quot;;
+            }
+            response.put(&quot;code&quot;, code);
+            response.put(&quot;msg&quot;, msg);
+            return ResponseEntity
+                    .status(HttpStatus.OK)
+                    .body(response);
+
+        } catch (Throwable throwable) {
+            log.error(&quot;&quot;, throwable);
+        }
+
+        response.put(&quot;code&quot;, 1);
+        response.put(&quot;msg&quot;, &quot;出现异常，授权失败&quot;);
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+}
+
+
+</code></pre></div></div> <footer class="page-edit"><!----> <div class="last-updated"><span class="prefix">Last Updated:</span> <span class="time">4/30/2020, 11:56:15 PM</span></div></footer> <div class="page-nav"><p class="inner"><span class="prev">
+      ←
+      <a href="/ud-blog/java/spring/OAuth2.html" class="prev">
+        OAuth2
+      </a></span> <span class="next"><a href="/ud-blog/java/spring/spring-boot-mongodb.html">
+        spring-boot mongodb
+      </a>
+      →
+    </span></p></div> </main></div><div class="global-ui"></div></div>
+    <script src="/ud-blog/assets/js/app.4b8665af.js" defer></script><script src="/ud-blog/assets/js/2.ac2a2294.js" defer></script><script src="/ud-blog/assets/js/9.0466326c.js" defer></script>
+  </body>
+</html>
