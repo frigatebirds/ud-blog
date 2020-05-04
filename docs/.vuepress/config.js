@@ -1,6 +1,7 @@
 const {fs, path} = require('@vuepress/shared-utils');
 
 module.exports = ctx => ({
+    base: '/ud-blog/',
     title: '技术收藏',
     description: '厉害',
     head: [
